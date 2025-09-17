@@ -96,9 +96,8 @@ class Node:
 
     def child_node(self, problem, action):
         next_state = problem.result(self.state, action)
-        pathCost = problem.path_cost(self, self.state, action, next_state)
-        next_node = Node(next_state, self, action, pathCost)
-        return next_node
+        pathCost = problem.path_cost(self.path_cost, self.state, action, next_state)
+        return Node(next_state, self, action, pathCost)
 
     def solution(self):
         """Return the sequence of actions to go from the root to this node."""
@@ -415,7 +414,12 @@ class GraphProblem(Problem):
         return action
 
     def path_cost(self, cost_so_far, A, action, B):
-        return cost_so_far + (self.graph.get(A, B) or np.inf)
+        """Return the total cost to reach B from A via action, given cost_so_far."""
+        edge_cost = self.graph.get(A, B)
+        if edge_cost is None:
+            return cost_so_far + np.inf
+        return cost_so_far + edge_cost
+
 
     def find_min_edge(self):
         """Find minimum value of edges."""
